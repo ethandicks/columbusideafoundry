@@ -1,4 +1,20 @@
-//11/16/2022 Initial code for Idea Foundry Chandelier
+/********
+
+  chandy-new-webserver - AP/webserver for CIF Memeber Build Night Chandelier
+
+  This ESP32 program implements a simple WiFi AP and webserver to control
+  the mobile chandelier for the Columbus Idea Foundry Member Build Night
+
+  Inspired by Rui Santos' https://randomnerdtutorials.com/esp32-access-point-ap-web-server/
+
+  Sessions:
+    19-Oct-2022 - basic web server functionality
+    16-Nov-2022 - Turn simple LEDs on and off
+    21-Dec-2022 - Added speed changes
+    18-Jan-2023 - Incorporated Dec 2022 changes and recast as chandy-new-webserver
+
+********/
+
 
 #include <WiFi.h>
 
@@ -27,19 +43,9 @@ const int speedhigh = 600;
 #define STEPPIN 4
 #define DIRPIN 5
 
+// IRAM_ATTR - timer routine to send step and direction over GPIO pins
 void IRAM_ATTR onTimer() {
     count++;
-
-    //if (count%1000) {
-        //Serial.print("count: ");
-        //Serial.println(count);
-    //}
-
-    //if (count%2==0) {
-    //    digitalWrite(LEDPIN, HIGH);
-    //} else {
-    //    digitalWrite(LEDPIN, LOW);
-    //}
 
     if (rotationenabled) {
         digitalWrite(DIRPIN, (rotationdirection?1:0));
@@ -48,6 +54,7 @@ void IRAM_ATTR onTimer() {
     
 }
 
+// setupTimerAlarm - determine timer interval based on requested speed
 void setupTimerAlarm() {
     if (rotationspeed=="low") {
         timerAlarmWrite(mytimer, 100000/speedlow, true);
@@ -58,6 +65,7 @@ void setupTimerAlarm() {
     }
 }
 
+// setup - init hardware and AP
 void setup()
 {
     Serial.begin(115200);
@@ -89,6 +97,7 @@ void setup()
 }
 
 
+// loop - connect to clients and parse user requests
 void loop()
 {
 	WiFiClient client = server.available();	// Listen for incoming clients
@@ -158,7 +167,7 @@ void loop()
 						client.println(".button2 {background-color: #555555;}</style></head>");
 
 						// Web Page Heading
-						client.println("<body><h1>Idea Foundry Magical Chandelier</h1>");
+						client.println("<body><h1>Idea Foundry Magical Chandelier - Jan 2023 edition</h1>");
 
                         client.println("<p>Enabled</p>");
                         if (rotationenabled) {
