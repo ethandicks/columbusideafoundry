@@ -2,6 +2,11 @@
 
 This example demonstrates how to use the WiFi library to put up a simple webserver for controlling attached devices
 
+Current functionality (Jan 2023):
+* motor on/off
+* motor cw/ccw
+* selectable rotation speed
+
 # Supported Targets
 
 Currently this example supports the following targets.
